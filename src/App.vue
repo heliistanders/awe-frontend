@@ -1,25 +1,84 @@
 <template>
+<div class="loading" :class="{ remove: !globalLoading }">
+    <img src="/img/loader.svg" alt="loading ...">
+  </div>
   <nav>
-        <a href="/"><img src="/img/logo.svg" alt="Home" id="logo"></a>
+        <router-link to="/"><img src="/img/logo.svg" alt="Home" id="logo"></router-link>
         <div class="nav_right">
 
-            <div class="lang_block">
-                <span class="lang_first">DE</span> / <span class="lang_second">EN</span>
+            <div class="lang_block" v-on:click="toggleLanguage">
+                <span class="lang_first" :class="{ chosenLanguage: language == 'de' }">DE</span> / <span class="lang_second" :class="{ chosenLanguage: language == 'en' }">EN</span>
             </div>
-            <button class="search_block block">
+            <a class="search_block block" v-on:click="toggleSearch">
                 <i class=" icon-ic_fluent_search_24_regular" id="search"></i>
-                <div>suche</div>
-            </button>
-            <button class="settings_block block">
+                <div>{{ languageStrings.search[language] }}</div>
+            </a>
+            <router-link to="/settings" class="settings_block block">
                 <i class=" icon-ic_fluent_settings_24_regular" id="setting"></i>
-                <div>Settings</div>
-            </button>
+                <div>{{ languageStrings.settings[language] }}</div>
+            </router-link>
         </div>
     </nav>
+    <div :class="{ hideSearch: hideSearch }" class="search_container">
+      <input type="text" :placeholder="languageStrings.search[language] + '...'" v-model="searchQuery" @input="search">
+      <button class="search_close" v-on:click="closeSearch">X</button>
+    </div>
   <router-view/>
 </template>
 
+<script>
+import { mapState } from "vuex";
+
+export default {
+  name: "App",
+  data () {
+    return {
+      hideSearch: true,
+      //searchQuery: ""
+    }
+  },
+  created(){
+    this.$store.dispatch('fetchMachines')
+  },
+  computed: {
+    ...mapState({
+      globalLoading: 'globalLoading',
+      language: 'language',
+      languageStrings: 'languageStrings',
+      searchQueryFromStore: 'searchQuery'
+    }),
+    searchQuery: {
+      get() {
+        return this.searchQueryFromStore;
+      },
+      set(value) {
+        this.$store.commit('search', value);
+      }
+    }
+  },
+  methods: {
+    toggleSearch() {
+      console.log("switch")
+      this.hideSearch = !this.hideSearch
+    },
+    search() {
+      console.log('search', this.searchQuery)
+      this.$store.commit('search', this.searchQuery)
+      //this.closeSearch()
+    },
+    closeSearch() {
+      this.$store.commit('search', '')
+      this.hideSearch = true;
+    },
+    toggleLanguage() {
+      this.$store.commit('changeLanguage')
+    }
+  }
+}
+</script>
+
 <style>
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -30,15 +89,17 @@
 
 nav {
   height: 80px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-grow: 0;
-    padding: 0 80px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, .4);
-    z-index: 100;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 0;
+  padding: 0 80px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, .4);
+  z-index: 100;
+  background: #fff;
 }
+
 
 .nav_right button {
   border: none;
@@ -60,23 +121,14 @@ nav {
 
 #search, #setting {
     font-size: 24px;
+    color: rgba(0, 0, 0, .64);
 }
 
 .block:hover {
   font-size: 10px;
 }
 
-.search_block {
-    width: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    font-size: 9px;
-    color: rgba(0, 0, 0, .64);
-    text-transform: uppercase;
-}
+
 
 .lang_block {
     width: 80px;
@@ -90,27 +142,20 @@ nav {
 }
 
 .lang_first {
-    color: rgba(0, 0, 0, 1);
+    color: rgba(0, 0, 0, .56);
 }
 
-.lang_first:hover, .lang_second:hover {
+/* .lang_first:hover, .lang_second:hover {
     color: #76b82a;
-}
+} */
 
 .lang_second {
     color: rgba(0, 0, 0, .56);
 }
 
-.settings_block {
-    width: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    font-size: 9px;
-    color: rgba(0, 0, 0, .64);
-    text-transform: uppercase;
+.chosenLanguage {
+  color: rgba(0, 0, 0, 1);
+  font-weight: bolder;
 }
 
 nav a {
@@ -133,5 +178,76 @@ nav a {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.search_block {
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    font-size: 9px;
+    color: rgba(0, 0, 0, .64);
+    text-transform: uppercase;
+}
+
+.settings_block {
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    font-size: 9px;
+    color: rgba(0, 0, 0, .64);
+    text-transform: uppercase;
+}
+
+.search_container {
+  z-index: -1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  background: #76b82a;
+}
+
+.search_container input {
+  flex-grow: 1;
+  max-width: 95%;
+  max-height: 40px;
+  border-radius: 5px;
+  border: none;
+  padding: 10px 20px;
+}
+
+.hideSearch {
+  display: none;
+}
+
+.search_close, .search_close:hover, .search_close:focus {
+  border: none;
+  background: none;
+  color: #555;
+  width: 40px;
+  height: 40px;
+}
+
+
+.loading {
+  z-index: 10000;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.4)
+}
+
+.remove {
+  display: none;
 }
 </style>
