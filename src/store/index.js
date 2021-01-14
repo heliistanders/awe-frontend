@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 
+
 export default createStore({
   state: {
     searchQuery: "",
@@ -89,25 +90,25 @@ export default createStore({
       commit('setMachines', machines)
       state.globalLoading = false;
     },
-    async startMachine({ commit, state }, id) {
+    async startMachine({ commit, state }, name) {
       state.globalLoading = true;
-      let resp = await fetch('/start/' + id)
+      let resp = await fetch('/start/' + name)
       let machines = await resp.json()
       console.log('start Machines', machines)
       commit('setMachines', machines)
       state.globalLoading = false;
     },
-    async stopMachine({ commit, state }, id) {
+    async stopMachine({ commit, state }, name) {
       state.globalLoading = true;
-      let resp = await fetch('/stop/' + id)
+      let resp = await fetch('/stop/' + name)
       let machines = await resp.json()
       console.log('stopped Machines', machines)
       commit('setMachines', machines)
       state.globalLoading = false;
     },
-    async restartMachine({ commit, state }, id) {
+    async restartMachine({ commit, state }, name) {
       state.globalLoading = true;
-      let resp = await fetch('/restart/' + id)
+      let resp = await fetch('/restart/' + name)
       let machines = await resp.json()
       console.log('restart Machines', machines)
       commit('setMachines', machines)

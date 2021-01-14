@@ -12,30 +12,37 @@
         </thead>
         <tbody class="m_body">
             <tr class="m_row" v-for="m in filteredMachines" :key="m.id">
-                <td class="m_name"><router-link :to="'/machine/' + m.id">{{m.name}}</router-link></td>
+                <td class="m_name"><router-link :to="'/machine/' + m.image">{{m.name}}</router-link>
+                  <span v-if="m.status == 'running'">
+                    <a v-for="p in m.ports" :key="p" class="machine_link" :href="'http://localhost:' + p" target="blank"><i class="icon-ic_fluent_open_16_regular" ></i></a>
+                  </span>
+                </td>
                 <td class="m_difficulty">{{ languageStrings.difficulties[m.difficulty.toLowerCase()][language] }}</td>
 
-                <td v-if="m.owned" class="m_owned"><i class=" icon-ic_fluent_checkmark_circle_24_regular" id="search"></i></td>
-                <td v-else class="m_owned"><i class=" icon-ic_fluent_dismiss_circle_24_regular" id="search"></i></td>
+                <td v-if="m.owned" class="m_owned"><i class=" icon-ic_fluent_checkmark_circle_24_regular"></i></td>
+                <td v-else class="m_owned"><i class=" icon-ic_fluent_dismiss_circle_24_regular"></i></td>
                 <td class="m_status"><span>{{ languageStrings.statusCodes[m.status.toLowerCase()][language] }}</span></td>
                 <td class="m_actions">
-                    <a v-if="m.status == 'stopped'" v-on:click="startMachine($event, m.id)">
+                    <a v-if="m.status == 'stopped'" v-on:click="startMachine($event, m.image)">
                         <i class=" icon-ic_fluent_play_circle_24_regular"></i>
                     </a>
                     <span v-else>
-                      <a v-on:click="restartMachine($event, m.id)">
+                      <a v-on:click="restartMachine($event, m.image)">
                           <i class=" icon-ic_fluent_arrow_sync_circle_24_regular"></i>
                       </a>
-                      <a v-on:click="stopMachine($event, m.id)">
+                      <a v-on:click="stopMachine($event, m.image)">
                           <i class=" icon-ic_fluent_dismiss_circle_24_regular"></i>
                       </a>
                     </span>
-                    <a v-on:click="hintMachine($event, m.id)">
+                    <a v-on:click="hintMachine($event, m.image)">
                         <i class=" icon-ic_fluent_lightbulb_circle_24_regular"></i>
                     </a>
-                    <a v-on:click="helpMachine($event, m.id)">
+                    <a v-on:click="helpMachine($event, m.image)">
                         <i class=" icon-ic_fluent_question_circle_24_regular"></i>
                     </a>
+                    <router-link :to="'/terminal/' + m.name" v-if="m.owned">
+                      <i class="icon-ic_fluent_chevron_right_circle_24_regular"></i>
+                    </router-link>
                 </td>
             </tr>
         </tbody>
@@ -86,14 +93,14 @@ export default {
       fetch('/machines').then(e =>e.json()).then(e => this.machines = e)
       //console.log(machines)
     },
-    async startMachine(event, id) {
-      this.$store.dispatch('startMachine', id);
+    async startMachine(event, name) {
+      this.$store.dispatch('startMachine', name);
     },
-    restartMachine(event, id) {
-      this.$store.dispatch('restartMachine', id);
+    restartMachine(event, name) {
+      this.$store.dispatch('restartMachine', name);
     },
-    stopMachine(event, id) {
-      this.$store.dispatch('stopMachine', id);
+    stopMachine(event, name) {
+      this.$store.dispatch('stopMachine', name);
     },
     hintMachine(event, id) {console.log(event.target, id)},
     helpMachine(event, id) {console.log(event.target, id)},
@@ -127,11 +134,9 @@ export default {
 }
 
 .m_owned {
-    vertical-align: bottom;
 }
 
 .m_actions {
-    vertical-align: bottom;
     font-size: 24px;
 }
 
@@ -158,6 +163,25 @@ export default {
 
 .icon-ic_fluent_question_circle_24_regular:hover {
   color: #af1280;
+}
+
+
+.machine_link {
+  margin-left: 10px;
+  transform: translateY(120px);
+}
+
+i {
+  font-size: 24px;
+    color: rgba(0, 0, 0, .64);
+}
+
+i:before {
+  vertical-align: middle;
+}
+
+.icon-ic_fluent_checkmark_circle_24_regular {
+  color :#42b983;
 }
 
 </style>
