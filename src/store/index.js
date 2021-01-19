@@ -4,71 +4,12 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     searchQuery: "",
+    allowSearch: false,
     machines: [],
     globalLoading: false,
-    language: 'en',
-    languageStrings: {
-      name: {
-        "en": "name",
-        "de": "Name"
-      },
-      difficulty: {
-        "en": "difficulty",
-        "de": "Schwierigkeit"
-      },
-      owned: {
-        "en": "owned",
-        "de": "Geschafft"
-      },
-      status: {
-        "en": "status",
-        "de": "Status",
-      },
-      actions: {
-        "en": "actions",
-        "de": "Aktionen"
-      },
-      search: {
-        "en": "search",
-        "de": "Suche"
-      },
-      settings: {
-        "en": "settings",
-        "de": "Einstellungen"
-      },
-      difficulties: {
-        easy: {
-          "en": "easy",
-          "de": "Einfach"
-        },
-        medium: {
-          "en": "medium",
-          "de": "Mittel"
-        },
-        hard: {
-          "en": "hard",
-          "de": "Schwer"
-        },
-        insane: {
-          "en": "insane",
-          "de": "Wahnsinn"
-        }
-      },
-      statusCodes: {
-        running: {
-          "en": "running",
-          "de": "aktiv"
-        },
-        stopped: {
-          "en": "stopped",
-          "de": "inaktiv"
-        }
-      }
-    }
   },
   mutations: {
     search(state, query) {
-      console.log("from store", query)
       state.searchQuery = query;
     },
     setMachines(state, machines) {
@@ -77,8 +18,8 @@ export default createStore({
     setLoading(state, isLoading) {
       state.globalLoading = isLoading
     },
-    changeLanguage(state) {
-      (state.language == 'de') ? state.language = 'en' : state.language =  'de'
+    allowSearch(state, value) {
+      state.allowSearch = value
     }
   },
   actions: {
@@ -113,6 +54,12 @@ export default createStore({
       console.log('restart Machines', machines)
       commit('setMachines', machines)
       state.globalLoading = false;
+    },
+    disableSearch({ commit }) {
+      commit('allowSearch', false)
+    },
+    enableSearch({ commit }) {
+      commit('allowSearch', true)
     }
   },
   modules: {

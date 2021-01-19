@@ -6,21 +6,21 @@
         <router-link to="/"><img src="/img/logo.svg" alt="Home" id="logo"></router-link>
         <div class="nav_right">
 
-            <div class="lang_block" v-on:click="toggleLanguage">
+            <!-- <div class="lang_block" v-on:click="toggleLanguage">
                 <span class="lang_first" :class="{ chosenLanguage: language == 'de' }">DE</span> / <span class="lang_second" :class="{ chosenLanguage: language == 'en' }">EN</span>
-            </div>
-            <a class="search_block block" v-on:click="toggleSearch">
-                <i class=" icon-ic_fluent_search_24_regular" id="search"></i>
-                <div>{{ languageStrings.search[language] }}</div>
+            </div> -->
+            <a class="search_block block" v-bind:class="{ disableSearch: !allowSearch }" v-on:click="toggleSearch">
+                <i class=" icon-ic_fluent_search_24_regular" v-bind:class="{ disableSearch: !allowSearch }"></i>
+                <div> Search </div>
             </a>
-            <router-link to="/settings" class="settings_block block">
+            <router-link to="/admin" class="settings_block block">
                 <i class=" icon-ic_fluent_settings_24_regular" id="setting"></i>
-                <div>{{ languageStrings.settings[language] }}</div>
+                <div>Admin</div>
             </router-link>
         </div>
     </nav>
-    <div :class="{ hideSearch: hideSearch }" class="search_container">
-      <input type="text" :placeholder="languageStrings.search[language] + '...'" v-model="searchQuery" @input="search">
+    <div :class="{ hideSearch: !allowSearch | hideSearch }" class="search_container">
+      <input type="text" placeholder="Search ..." v-model="searchQuery" @input="search">
       <button class="search_close" v-on:click="closeSearch">X</button>
     </div>
   <router-view/>
@@ -43,9 +43,8 @@ export default {
   computed: {
     ...mapState({
       globalLoading: 'globalLoading',
-      language: 'language',
-      languageStrings: 'languageStrings',
-      searchQueryFromStore: 'searchQuery'
+      searchQueryFromStore: 'searchQuery',
+      allowSearch: 'allowSearch'
     }),
     searchQuery: {
       get() {
@@ -54,11 +53,13 @@ export default {
       set(value) {
         this.$store.commit('search', value);
       }
-    }
+    },
   },
   methods: {
     toggleSearch() {
-      console.log("switch")
+      if(!this.allowSearch){
+        return
+      }
       this.hideSearch = !this.hideSearch
     },
     search() {
@@ -70,14 +71,18 @@ export default {
       this.$store.commit('search', '')
       this.hideSearch = true;
     },
-    toggleLanguage() {
-      this.$store.commit('changeLanguage')
-    }
   }
 }
 </script>
 
 <style>
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -119,13 +124,17 @@ nav {
     align-items: center;
 }
 
-#search, #setting {
+.icon-ic_fluent_search_24_regular, #setting {
     font-size: 24px;
     color: rgba(0, 0, 0, .64);
 }
 
+.block {
+  transition: transform .2s ease-out;
+}
+
 .block:hover {
-  font-size: 10px;
+  transform: scale(1.1);
 }
 
 
@@ -249,5 +258,9 @@ nav a {
 
 .remove {
   display: none;
+}
+
+.disableSearch, .disableSearch:hover {
+  color: #ccc;
 }
 </style>

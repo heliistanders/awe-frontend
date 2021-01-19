@@ -9,12 +9,12 @@ const routes = [
     component: Home
   },
   {
-    path: '/settings',
-    name: 'Settings',
+    path: '/admin',
+    name: 'Admin',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Settings.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Admin.vue')
   },
   {
     path: '/machine/:name',
@@ -42,8 +42,8 @@ const router = createRouter({
 })
 
 router.beforeEach((from, to) => {
-  console.log(from)
-  console.log(to)
+  console.log(from, to)
+  store.commit('allowSearch', false)
   store.commit('search', '')
   return true
 })

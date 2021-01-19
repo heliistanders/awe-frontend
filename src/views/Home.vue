@@ -3,44 +3,46 @@
     <table class="m_table">
         <thead class="m_header">
             <tr class="m_header_row">
-                <th class="m_header_name">{{ languageStrings.name[language] }}</th>
-                <th class="m_header_difficulty">{{ languageStrings.difficulty[language] }}</th>
-                <th class="m_header_owned">{{ languageStrings.owned[language] }}</th>
-                <th class="m_header_status">{{ languageStrings.status[language] }}</th>
-                <th class="m_header_actions">{{ languageStrings.actions[language] }}</th>
+                <th class="m_header_name"> name </th>
+                <th class="m_header_difficulty"> difficulty </th>
+                <th class="m_header_owned"> owned </th>
+                <th class="m_header_status"> status </th>
+                <th class="m_header_actions"> actions </th>
             </tr>
         </thead>
         <tbody class="m_body">
             <tr class="m_row" v-for="m in filteredMachines" :key="m.id">
-                <td class="m_name"><router-link :to="'/machine/' + m.image">{{m.name}}</router-link>
-                  <span v-if="m.status == 'running'">
+                <td class="m_name">
+                  <!-- <router-link :to="'/machine/' + m.image">{{ m.name }}</router-link> -->
+                  {{m.name}}
+                  <span v-if="m.ports">
                     <a v-for="p in m.ports" :key="p" class="machine_link" :href="'http://localhost:' + p" target="blank"><i class="icon-ic_fluent_open_16_regular" ></i></a>
                   </span>
                 </td>
-                <td class="m_difficulty">{{ languageStrings.difficulties[m.difficulty.toLowerCase()][language] }}</td>
+                <td class="m_difficulty"> {{ m.difficulty }} </td>
 
-                <td v-if="m.owned" class="m_owned"><i class=" icon-ic_fluent_checkmark_circle_24_regular"></i></td>
-                <td v-else class="m_owned"><i class=" icon-ic_fluent_dismiss_circle_24_regular"></i></td>
-                <td class="m_status"><span>{{ languageStrings.statusCodes[m.status.toLowerCase()][language] }}</span></td>
+                <td v-if="m.owned" class="m_owned"><i class=" icon-ic_fluent_checkmark_circle_24_regular" title="Owned"></i></td>
+                <td v-else class="m_owned"><i class=" icon-ic_fluent_dismiss_circle_24_regular" title="Not Owned"></i></td>
+                <td class="m_status"><span> {{ m.status }} </span></td>
                 <td class="m_actions">
-                    <a v-if="m.status == 'stopped'" v-on:click="startMachine($event, m.image)">
+                    <a v-if="m.status == 'not running'" v-on:click="startMachine($event, m.image)" title="Start Machine">
                         <i class=" icon-ic_fluent_play_circle_24_regular"></i>
                     </a>
                     <span v-else>
-                      <a v-on:click="restartMachine($event, m.image)">
+                      <a v-on:click="restartMachine($event, m.image)" title="Reset Machine">
                           <i class=" icon-ic_fluent_arrow_sync_circle_24_regular"></i>
                       </a>
-                      <a v-on:click="stopMachine($event, m.image)">
+                      <a v-on:click="stopMachine($event, m.image)" title="Stop Machine" >
                           <i class=" icon-ic_fluent_dismiss_circle_24_regular"></i>
                       </a>
                     </span>
-                    <a v-on:click="hintMachine($event, m.image)">
+                    <a v-on:click="hintMachine($event, m)" v-if="m.hint" title="Hint">
                         <i class=" icon-ic_fluent_lightbulb_circle_24_regular"></i>
                     </a>
-                    <a v-on:click="helpMachine($event, m.image)">
-                        <i class=" icon-ic_fluent_question_circle_24_regular"></i>
+                    <a v-on:click="solveMachine($event, m.image)" v-if="!m.owned" title="Solve">
+                        <i class=" icon-ic_fluent_flag_28_regular"></i>
                     </a>
-                    <router-link :to="'/terminal/' + m.name" v-if="m.owned">
+                    <router-link :to="'/terminal/' + m.name" v-if="m.owned" title="Open Terminal">
                       <i class="icon-ic_fluent_chevron_right_circle_24_regular"></i>
                     </router-link>
                 </td>
@@ -61,14 +63,15 @@ export default {
       loading: false
     }
   },
+  beforeMount(){
+    this.$store.dispatch('enableSearch')
+  },
   created() {
-    this.$store.dispatch('fetchMachines')
+    // this.$store.dispatch('fetchMachines')
   },
   computed: {
     ...mapState({
       machines: 'machines',
-      language: 'language',
-      languageStrings: 'languageStrings',
       searchQuery: 'searchQuery'
     }),
     filteredMachines() {
@@ -89,10 +92,10 @@ export default {
     }
   },
   methods: {
-    fetchMachines() {
-      fetch('/machines').then(e =>e.json()).then(e => this.machines = e)
-      //console.log(machines)
-    },
+    // fetchMachines() {
+    //   fetch('/machines').then(e =>e.json()).then(e => this.machines = e)
+    //   //console.log(machines)
+    // },
     async startMachine(event, name) {
       this.$store.dispatch('startMachine', name);
     },
@@ -102,8 +105,8 @@ export default {
     stopMachine(event, name) {
       this.$store.dispatch('stopMachine', name);
     },
-    hintMachine(event, id) {console.log(event.target, id)},
-    helpMachine(event, id) {console.log(event.target, id)},
+    hintMachine(event, machine) {alert(machine.hint)},
+    solveMachine(event, id) {console.log(event.target, id)},
   }
 }
 </script>
@@ -161,7 +164,7 @@ export default {
   color: #00afcb;
 }
 
-.icon-ic_fluent_question_circle_24_regular:hover {
+.icon-ic_fluent_flag_28_regular:hover {
   color: #af1280;
 }
 
@@ -182,6 +185,10 @@ i:before {
 
 .icon-ic_fluent_checkmark_circle_24_regular {
   color :#42b983;
+}
+
+.icon-ic_fluent_chevron_right_circle_24_regular:hover {
+  color: #000;
 }
 
 </style>
