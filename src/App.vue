@@ -24,13 +24,18 @@
       <button class="search_close" v-on:click="closeSearch">X</button>
     </div>
   <router-view/>
+  <flag-Solve :machine="solveMachine" v-if="showSolve"/>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import FlagSolve from "./components/FlagSolve";
 
 export default {
   name: "App",
+  components: {
+    FlagSolve
+  },
   data () {
     return {
       hideSearch: true,
@@ -44,7 +49,9 @@ export default {
     ...mapState({
       globalLoading: 'globalLoading',
       searchQueryFromStore: 'searchQuery',
-      allowSearch: 'allowSearch'
+      allowSearch: 'allowSearch',
+      solveMachine: 'solveMachine',
+      showSolve: 'showSolve'
     }),
     searchQuery: {
       get() {

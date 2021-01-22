@@ -39,10 +39,10 @@
                     <a v-on:click="hintMachine($event, m)" v-if="m.hint" title="Hint">
                         <i class=" icon-ic_fluent_lightbulb_circle_24_regular"></i>
                     </a>
-                    <a v-on:click="solveMachine($event, m.image)" v-if="!m.owned" title="Solve">
+                    <a v-on:click="solveMachine($event, m.name)" v-if="!m.owned && m.status != 'not running'" title="Solve">
                         <i class=" icon-ic_fluent_flag_28_regular"></i>
                     </a>
-                    <router-link :to="'/terminal/' + m.name" v-if="m.owned" title="Open Terminal">
+                    <router-link :to="'/terminal/' + m.name" v-if="m.owned && m.status != 'not running'" title="Open Terminal">
                       <i class="icon-ic_fluent_chevron_right_circle_24_regular"></i>
                     </router-link>
                 </td>
@@ -106,7 +106,10 @@ export default {
       this.$store.dispatch('stopMachine', name);
     },
     hintMachine(event, machine) {alert(machine.hint)},
-    solveMachine(event, id) {console.log(event.target, id)},
+    solveMachine(event, machine) {
+      this.$store.commit('setSolveMachine', machine)
+      this.$store.commit('showSolve', true)
+    },
   }
 }
 </script>

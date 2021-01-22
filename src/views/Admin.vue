@@ -12,7 +12,7 @@
     </div>
     <div class="form" v-if="status == 'new'">
       <label for="password">Password: </label>
-      <input type="text" name="password" id="password" v-model="password" />
+      <input type="password" name="password" id="password" v-model="password" />
       <div class="file-input">
         <label for="machine">
           <i class="icon-ic_fluent_arrow_upload_24_regular"></i>
