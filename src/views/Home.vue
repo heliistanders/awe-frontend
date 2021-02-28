@@ -16,7 +16,7 @@
                   <!-- <router-link :to="'/machine/' + m.image">{{ m.name }}</router-link> -->
                   {{m.name}}
                   <span v-if="m.ports">
-                    <a v-for="p in m.ports" :key="p" class="machine_link" :href="'http://localhost:' + p" target="blank"><i class="icon-ic_fluent_open_16_regular" ></i></a>
+                    <a v-for="p in m.ports" :key="p" class="machine_link" :href="'http://' + hostname +':' + p" target="blank"><i class="icon-ic_fluent_open_16_regular" ></i></a>
                   </span>
                 </td>
                 <td class="m_difficulty"> {{ m.difficulty }} </td>
@@ -87,6 +87,9 @@ export default {
           }
         });
       }
+    },
+    hostname(){
+      return window.location.hostname
     }
   },
   methods: {
