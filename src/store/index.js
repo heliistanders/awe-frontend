@@ -50,7 +50,6 @@ export default createStore({
       state.globalLoading = true;
       let resp = await fetch('/machines')
       let machines = await resp.json()
-      console.log('Machines', machines)
       commit('setMachines', machines)
       state.globalLoading = false;
     },
@@ -58,7 +57,6 @@ export default createStore({
       state.globalLoading = true;
       let resp = await fetch('/start/' + name)
       let machines = await resp.json()
-      console.log('start Machines', machines)
       commit('setMachines', machines)
       state.globalLoading = false;
     },
@@ -66,7 +64,6 @@ export default createStore({
       state.globalLoading = true;
       let resp = await fetch('/stop/' + name)
       let machines = await resp.json()
-      console.log('stopped Machines', machines)
       commit('setMachines', machines)
       state.globalLoading = false;
     },
@@ -74,7 +71,6 @@ export default createStore({
       state.globalLoading = true;
       let resp = await fetch('/restart/' + name)
       let machines = await resp.json()
-      console.log('restart Machines', machines)
       commit('setMachines', machines)
       state.globalLoading = false;
     },
@@ -94,7 +90,6 @@ export default createStore({
           }
         })
         let data = resp.data
-        console.log(data)
         if(data == "OK" && resp.status == 200) {
           commit('setSolveResult', "Right! Well done!")
           commit('setAnswerCorrect', true)

@@ -36,7 +36,6 @@ export default {
       if(event.target != this.$refs.form){
         return
       }
-      console.log(event)
       this.$store.commit('showSolve', false)
     },
     close(){

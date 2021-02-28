@@ -70,9 +70,7 @@ export default {
       this.hideSearch = !this.hideSearch
     },
     search() {
-      console.log('search', this.searchQuery)
       this.$store.commit('search', this.searchQuery)
-      //this.closeSearch()
     },
     closeSearch() {
       this.$store.commit('search', '')

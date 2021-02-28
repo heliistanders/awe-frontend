@@ -80,8 +80,6 @@ export default {
       } else {
         return this.machines.filter(m => {
           let text = m.id+m.name+m.difficulty+m.status
-          console.log(text.toLowerCase())
-          console.log(this.searchQuery.toLowerCase())
           if (text.toLowerCase().includes(this.searchQuery.toLowerCase())){
             return true
           } else {
@@ -92,10 +90,6 @@ export default {
     }
   },
   methods: {
-    // fetchMachines() {
-    //   fetch('/machines').then(e =>e.json()).then(e => this.machines = e)
-    //   //console.log(machines)
-    // },
     async startMachine(event, name) {
       this.$store.dispatch('startMachine', name);
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="admin">
     <h1>Admin</h1>
-    <h2 v-if="status == 'error'">Something went wrong. Please try again</h2>
+    <h2 v-if="status == 'error'">Something went wrong or wrong password</h2>
     <div v-if="status == 'loading'">
       <h2>Uploading</h2>
       <progress max="100" :value.prop="uploadPercentage"></progress>
@@ -82,7 +82,7 @@ export default {
         Make the request to the POST /single-file URL
       */
      try {
-       let req = await axios
+       await axios
          .post("/add", formData, {
            headers: {
              "Content-Type": "multipart/form-data",
@@ -97,8 +97,6 @@ export default {
              this.uploadPercentage = percentage;
            }.bind(this),
          })
-         console.log(req)
-         console.log("Success")
          this.status = "done"
 
      } catch (err) {
