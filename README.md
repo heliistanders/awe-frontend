@@ -28,6 +28,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - [ ] Refactor the code ...
 - [ ] Better error handling (Message System?)
+- [ ] 
 
 # License
 

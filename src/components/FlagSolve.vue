@@ -1,7 +1,13 @@
 <template>
   <div class="flag_solve_wrapper" v-on:click="hide" ref="form">
     <div class="flag_solve">
-      <h1>{{machine}}</h1>
+      <div class="close_wrapper">
+        <button class="closeBtn" @click="close">X</button>
+      </div>
+      <h1>{{machine || 'Machine'}}</h1>
+      
+      <p v-if="showCorrectAnswer" class="right">{{solveResult}}</p>
+      <p v-if="showWrongAnswer" class="wrong">{{solveResult}}</p>
       <label for="flag">Flag:</label>
       <input type="text" name="flag" id="flag" v-model="flag">
       <button v-on:click="submitFlag()">Submit</button>
@@ -10,6 +16,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: 'FlagSolve',
   props: {
@@ -23,9 +31,6 @@ export default {
   methods: {
     submitFlag(){
       this.$store.dispatch('submitFlag', this.flag)
-      setTimeout(() => {
-        this.$store.commit('showSolve', false)
-      }, 2000)
     },
     hide(event) {
       if(event.target != this.$refs.form){
@@ -33,6 +38,22 @@ export default {
       }
       console.log(event)
       this.$store.commit('showSolve', false)
+    },
+    close(){
+      this.$store.commit('showSolve', false)
+    }
+  },
+  computed: {
+    ...mapState({
+      solveResult: 'solveResult',
+      answerCorrect: 'answerCorrect',
+      showAnswer: 'showAnswer'
+    }),
+    showCorrectAnswer() {
+      return this.showAnswer && this.answerCorrect
+    },
+    showWrongAnswer() {
+      return this.showAnswer && !this.answerCorrect
     }
   }
 }
@@ -62,9 +83,30 @@ export default {
   background: #fff;
   display:flex;
   flex-direction: column;
+  position: relative;
 }
 
 button {
   margin-top: 20px;
+}
+
+.closeBtn {
+  background: white;
+  border: none;
+  outline: none;
+}
+
+.close_wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  height: 20px;
+}
+
+.right {
+  color: green;
+}
+
+.wrong {
+  color:red;
 }
 </style>

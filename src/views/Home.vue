@@ -42,7 +42,7 @@
                     <a v-on:click="solveMachine($event, m.name)" v-if="!m.owned && m.status != 'not running'" title="Solve">
                         <i class=" icon-ic_fluent_flag_28_regular"></i>
                     </a>
-                    <router-link :to="'/terminal/' + m.name" v-if="m.owned && m.status != 'not running'" title="Open Terminal">
+                    <router-link :to="'/terminal/' + m.image" v-if="m.owned && m.status != 'not running'" title="Open Terminal">
                       <i class="icon-ic_fluent_chevron_right_circle_24_regular"></i>
                     </router-link>
                 </td>

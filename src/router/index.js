@@ -14,7 +14,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Admin.vue')
+    component: () => import(/* webpackChunkName: "admin" */ '../views/Admin.vue')
   },
   {
     path: '/machine/:name',
@@ -22,7 +22,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Machine.vue'),
+    component: () => import(/* webpackChunkName: "machine" */ '../views/Machine.vue'),
     props: true
   },
   {
@@ -31,7 +31,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Terminal.vue'),
+    component: () => import(/* webpackChunkName: "terminal" */ '../views/Terminal.vue'),
     props: true
   }
 ]

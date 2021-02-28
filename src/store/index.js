@@ -9,7 +9,9 @@ export default createStore({
     globalLoading: false,
     showSolve: false,
     solveMachine: '',
-    solveResult: ''
+    solveResult: '',
+    answerCorrect: null,
+    showAnswer: false,
   },
   mutations: {
     search(state, query) {
@@ -26,12 +28,21 @@ export default createStore({
     },
     showSolve(state, value) {
       state.showSolve = value
+      if(!value){
+        state.showAnswer = false
+      }
     },
     setSolveMachine(state, machine) {
       state.solveMachine = machine
     },
     setSolveResult(state, result) {
       state.solveResult = result
+    },
+    setAnswerCorrect(state, result) {
+      state.answerCorrect = result
+    },
+    showAnswer(state, result) {
+      state.showAnswer = result
     }
   },
   actions: {
@@ -84,17 +95,23 @@ export default createStore({
         })
         let data = resp.data
         console.log(data)
-        if(data == "OK") {
+        if(data == "OK" && resp.status == 200) {
           commit('setSolveResult', "Right! Well done!")
+          commit('setAnswerCorrect', true)
+          commit('showAnswer', true)
           this.dispatch('fetchMachines')
         } else {
-          throw new Error("Wrong Flag")
+          commit('setSolveResult', "Wrong Flag!")
+          commit('setAnswerCorrect', false)
+          commit('showAnswer', true)
         }
       } catch(err) {
-        commit('setSolveResult', "Wrong. Sorry!")
+          commit('setSolveResult', "Wrong Flag!")
+          commit('setAnswerCorrect', false)
+          commit('showAnswer', true)
         console.error(err)
       }
-    }
+    },
   },
   modules: {
   }

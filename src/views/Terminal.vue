@@ -8,17 +8,27 @@
 <script>
 import 'xterm/css/xterm.css'
 import { Terminal } from "xterm";
+import { AttachAddon } from 'xterm-addon-attach'
 export default {
   name: "TerminalPage",
   mounted() {
-    let term = new Terminal({});
+    let term = new Terminal({
+      cursorBlink: true,
+      cursorStyle: 'bar'
+    });
+    let url = ''
+    // the development proxy is not working for websocket connections
+    // so we're are switching the url depending on dev/prod mode
+    if(process.env.NODE_ENV == 'development'){
+      url = encodeURI('ws://' + 'localhost:5000' + '/terminals?name=' + this.name)
+    } else {
+      url = encodeURI('ws://' + window.location.host + '/terminals?name=' + this.name)
+    }
+    const socket = new WebSocket(url);
+    let attachAddon = new AttachAddon(socket)
+    term.loadAddon(attachAddon)
     term.open(this.$refs.terminal);
-    term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ')
     term.focus()
-    term.onData((data) => {
-      console.log(data)
-      term.write(data)
-    })
   },
   props: {
     name: String,
